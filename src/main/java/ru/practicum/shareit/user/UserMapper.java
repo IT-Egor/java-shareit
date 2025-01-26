@@ -18,4 +18,6 @@ public interface UserMapper {
     MergeUserResponse responseToMergeUserResponse(UserResponse userResponse);
 
     UserResponse userToResponse(User user);
+
+    User responseToUser(UserResponse userResponse);
 }

@@ -64,7 +64,7 @@ public class InMemoryUserRepository implements UserRepository {
     private long getNextId() {
         long maxId = users.keySet().stream()
                 .max(Long::compareTo)
-                .orElse(0L);
+                .orElse(1L);
         return ++maxId;
     }
 }

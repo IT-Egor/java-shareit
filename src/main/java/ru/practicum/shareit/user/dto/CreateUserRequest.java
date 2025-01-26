@@ -7,6 +7,11 @@ import lombok.Data;
 
 @Data
 public class CreateUserRequest {
-    private @NotBlank String name;
-    private @NotNull @Email String email;
+
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    @NotNull(message = "Email is required")
+    @Email(message = "Email is not valid")
+    private String email;
 }
