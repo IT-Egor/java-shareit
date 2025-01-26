@@ -57,4 +57,9 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemResponse> getAllUserItems(Long ownerId) {
         return itemRepository.findAllUserItems(ownerId).stream().map(itemMapper::itemToResponse).toList();
     }
+
+    @Override
+    public List<ItemResponse> searchItems(String query) {
+        return itemRepository.search(query).stream().map(itemMapper::itemToResponse).toList();
+    }
 }

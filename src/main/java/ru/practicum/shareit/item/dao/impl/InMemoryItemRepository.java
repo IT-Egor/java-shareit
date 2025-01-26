@@ -6,10 +6,7 @@ import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class InMemoryItemRepository implements ItemRepository {
@@ -55,6 +52,19 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public List<Item> findAllUserItems(Long userId) {
         return items.values().stream().filter(item -> item.getOwner().getId().equals(userId)).toList();
+    }
+
+    @Override
+    public List<Item> search(String query) {
+        if (query.isBlank()) {
+            return List.of();
+        }
+        String lowerQuery = query.toLowerCase();
+        return items.values().stream().filter(item ->
+                (item.getName().toLowerCase().contains(lowerQuery)
+                    || item.getDescription().toLowerCase().contains(lowerQuery)
+                ) && item.getAvailable())
+                .toList();
     }
 
     private long getNextId() {

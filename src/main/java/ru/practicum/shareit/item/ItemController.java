@@ -44,4 +44,10 @@ public class ItemController {
     public List<ItemResponse> getAllUserItems(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.getAllUserItems(ownerId);
     }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemResponse> searchItems(@RequestParam String text) {
+        return itemService.searchItems(text);
+    }
 }

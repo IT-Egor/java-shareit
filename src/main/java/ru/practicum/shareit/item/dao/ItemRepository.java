@@ -13,4 +13,6 @@ public interface ItemRepository {
     Optional<Item> findById(Long itemId);
 
     List<Item> findAllUserItems(Long userId);
+
+    List<Item> search(String query);
 }
