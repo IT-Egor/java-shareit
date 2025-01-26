@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,6 +50,11 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Optional<Item> findById(Long itemId) {
         return Optional.ofNullable(items.get(itemId));
+    }
+
+    @Override
+    public List<Item> findAllUserItems(Long userId) {
+        return items.values().stream().filter(item -> item.getOwner().getId().equals(userId)).toList();
     }
 
     private long getNextId() {

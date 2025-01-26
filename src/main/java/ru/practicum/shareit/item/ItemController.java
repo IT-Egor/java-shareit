@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CreateItemRequest;
+import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.dto.MergeItemResponse;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.dto.UpdateUserRequest;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -29,5 +31,17 @@ public class ItemController {
                                         @PathVariable Long itemId,
                                         @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.updateItem(itemId, updateItemRequest, ownerId);
+    }
+
+    @GetMapping("/{itemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ItemResponse getItem(@PathVariable(required = false) Long itemId) {
+        return itemService.getItem(itemId);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemResponse> getAllUserItems(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+        return itemService.getAllUserItems(ownerId);
     }
 }

@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +51,10 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new NotFoundException(String.format("Item with id %s not found", itemId));
         }
+    }
+
+    @Override
+    public List<ItemResponse> getAllUserItems(Long ownerId) {
+        return itemRepository.findAllUserItems(ownerId).stream().map(itemMapper::itemToResponse).toList();
     }
 }
