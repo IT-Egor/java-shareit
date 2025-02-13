@@ -52,7 +52,8 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .status(400).build();
+                .status(400)
+                .build();
     }
 
     @ExceptionHandler
@@ -61,7 +62,8 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .status(400).build();
+                .status(400)
+                .build();
     }
 
     @ExceptionHandler
@@ -70,6 +72,7 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .status(500).build();
+                .status(500)
+                .build();
     }
 }
