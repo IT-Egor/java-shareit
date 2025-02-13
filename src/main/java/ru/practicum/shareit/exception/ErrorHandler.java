@@ -69,6 +69,9 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e) {
+        System.out.println("Class: " + e.getClass());
+        System.out.println("Message: " + e.getMessage());
+        System.out.println("Cause: " + e.getCause());
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
