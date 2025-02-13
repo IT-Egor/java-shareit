@@ -19,11 +19,15 @@ public interface ItemMapper {
 
     @Mapping(target = "owner", source = "owner")
     @Mapping(target = "name", source = "updateItemRequest.name")
-    Item updateRequestToItem(UpdateItemRequest updateItemRequest, User owner);
+    @Mapping(target = "id", source = "id")
+    Item updateRequestToItem(UpdateItemRequest updateItemRequest, User owner, Long id);
 
     MergeItemResponse itemToMergeResponse(Item item);
 
-    MergeItemResponse responseToMergeResponse(ItemResponse itemResponse);
-
     ItemResponse itemToResponse(Item item);
+
+    @Mapping(target = "owner", source = "owner")
+    @Mapping(target = "name", source = "itemResponse.name")
+    @Mapping(target = "id", source = "itemResponse.id")
+    Item responseToItem(ItemResponse itemResponse, User owner);
 }

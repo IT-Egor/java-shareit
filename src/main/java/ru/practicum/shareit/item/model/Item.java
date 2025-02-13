@@ -21,9 +21,11 @@ public class Item {
     private String description;
     private Boolean available;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     private Request request;
 

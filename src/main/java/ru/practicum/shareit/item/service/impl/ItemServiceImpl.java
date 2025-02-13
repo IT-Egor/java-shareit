@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemRepository;
@@ -36,11 +37,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public MergeItemResponse updateItem(Long itemId, UpdateItemRequest updateItemRequest, Long ownerId) {
-        User user = userMapper.responseToUser(userService.getUser(ownerId));
-        Item item = itemMapper.updateRequestToItem(updateItemRequest, user);
-        itemRepository.update(itemId, item);
+        User owner = userMapper.responseToUser(userService.getUser(ownerId));
+        Item item = itemMapper.updateRequestToItem(updateItemRequest, owner, itemId);
 
-        return itemMapper.responseToMergeResponse(getItem(itemId));
+        Item oldItem = getUpdatedOldItem(item, owner);
+        itemRepository.save(oldItem);
+
+        return itemMapper.itemToMergeResponse(item);
     }
 
     @Override
@@ -55,11 +58,31 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponse> getAllUserItems(Long ownerId) {
-        return itemRepository.findAllUserItems(ownerId).stream().map(itemMapper::itemToResponse).toList();
+        return itemRepository.findItemsByOwnerId(ownerId).stream()
+                .map(itemMapper::itemToResponse).toList();
     }
 
     @Override
     public List<ItemResponse> searchItems(String query) {
-        return itemRepository.search(query).stream().map(itemMapper::itemToResponse).toList();
+        return itemRepository.findItemsByNameLikeIgnoreCaseAndAvailableTrue(query).stream()
+                .map(itemMapper::itemToResponse).toList();
+    }
+
+    private Item getUpdatedOldItem(Item item, User owner) {
+        Item oldItem = itemMapper.responseToItem(getItem(item.getId()), owner);
+        if (!item.getOwner().getId()
+                .equals(oldItem.getOwner().getId())) {
+            throw new AuthorizationException("Authorization failed");
+        }
+        if (item.getName() != null) {
+            oldItem.setName(item.getName());
+        }
+        if (item.getDescription() != null) {
+            oldItem.setDescription(item.getDescription());
+        }
+        if (item.getAvailable() != null) {
+            oldItem.setAvailable(item.getAvailable());
+        }
+        return oldItem;
     }
 }
