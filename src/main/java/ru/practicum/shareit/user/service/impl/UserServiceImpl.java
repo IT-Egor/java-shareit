@@ -7,7 +7,7 @@ import ru.practicum.shareit.exception.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.CreateUserRequest;
 import ru.practicum.shareit.user.dto.MergeUserResponse;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public MergeUserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         try {
-            User user = userMapper.updateRequestToUser(updateUserRequest);
-            user.setId(userId);
-            userRepository.save(user);
+            User user = userMapper.updateRequestToUser(updateUserRequest, userId);
+            User oldUser = getUpdatedOldUser(user);
+            userRepository.save(oldUser);
             return userMapper.responseToMergeUserResponse(getUser(userId));
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("users_email_key")) {
@@ -65,5 +65,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    private User getUpdatedOldUser(User user) {
+        User oldUser = userMapper.responseToUser(getUser(user.getId()));
+        if (user.getEmail() != null) {
+            oldUser.setEmail(user.getEmail());
+        }
+        if (user.getName() != null) {
+            oldUser.setName(user.getName());
+        }
+        return oldUser;
     }
 }

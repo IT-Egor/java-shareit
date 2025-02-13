@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.practicum.shareit.user.dto.CreateUserRequest;
 import ru.practicum.shareit.user.dto.MergeUserResponse;
@@ -11,7 +12,8 @@ import ru.practicum.shareit.user.dto.UserResponse;
 public interface UserMapper {
     User createRequestToUser(CreateUserRequest createUserRequest);
 
-    User updateRequestToUser(UpdateUserRequest updateUserRequest);
+    @Mapping(target = "id", source = "id")
+    User updateRequestToUser(UpdateUserRequest updateUserRequest, Long id);
 
     MergeUserResponse userToMergeResponse(User user);
 
