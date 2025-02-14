@@ -7,7 +7,7 @@ import lombok.ToString;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -27,8 +27,8 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     private User booker;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;

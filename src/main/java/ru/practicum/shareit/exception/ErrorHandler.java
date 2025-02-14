@@ -6,9 +6,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.exceptions.EmailAlreadyExistsException;
-import ru.practicum.shareit.exception.exceptions.AuthorizationException;
-import ru.practicum.shareit.exception.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.exceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,6 +31,26 @@ public class ErrorHandler {
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
                 .status(409)
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnavailableItemBookingException(UnavailableItemBookingException e) {
+        return ErrorResponse.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(400)
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidDateException(InvalidDateException e) {
+        return ErrorResponse.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(400)
                 .build();
     }
 
