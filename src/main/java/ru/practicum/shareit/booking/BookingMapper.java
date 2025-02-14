@@ -27,8 +27,10 @@ public interface BookingMapper {
     @Mapping(target = "id", source = "booking.id")
     MergeBookingResponse bookingToMergeResponse(Booking booking, ItemResponse item, UserResponse booker);
 
+    @Mapping(target = "item", source = "item")
+    @Mapping(target = "booker", source = "booker")
     @Mapping(target = "start", source = "booking.startDate")
     @Mapping(target = "end", source = "booking.endDate")
     @Mapping(target = "id", source = "booking.id")
-    BookingResponse bookingToResponse(Booking booking);
+    BookingResponse bookingToResponse(Booking booking, ItemResponse item, UserResponse booker);
 }

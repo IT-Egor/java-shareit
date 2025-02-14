@@ -2,10 +2,7 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.dto.CreateBookingRequest;
 import ru.practicum.shareit.booking.dto.MergeBookingResponse;
@@ -23,6 +20,7 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -52,9 +50,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public MergeBookingResponse setApproved(Long bookingId, Boolean approved, Long ownerId) {
-        Booking booking = getBooking(bookingId);
+        Booking booking = findBooking(bookingId);
         if (!booking.getItem().getOwner().getId().equals(ownerId)) {
-            throw new AuthorizationException(String.format("User %d is not owner of item %d", ownerId, bookingId));
+            throw new AuthorizationException(String.format("User id=%d is not owner of item id=%d", ownerId, bookingId));
         }
         if (Boolean.TRUE.equals(approved)) {
             booking.setStatus(Status.APPROVED);
@@ -68,21 +66,47 @@ public class BookingServiceImpl implements BookingService {
                 userMapper.userToResponse(booking.getBooker()));
     }
 
-    public BookingResponse getBookingResponse(Long bookingId) {
-        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
-        if (bookingOpt.isPresent()) {
-            return bookingMapper.bookingToResponse(bookingOpt.get());
-        } else {
-            throw new NotFoundException(String.format("Booking with id %d not found", bookingId));
+    @Override
+    public BookingResponse getBooking(Long bookingId, Long userId) {
+        Booking booking = findBooking(bookingId);
+        if (!booking.getBooker().getId().equals(userId)
+                && !booking.getItem().getOwner().getId().equals(userId)) {
+            throw new AuthorizationException(String.format("User id=%d doesnt have access to item id=%d", userId, bookingId));
         }
+
+        return bookingMapper.bookingToResponse(
+                booking,
+                itemMapper.itemToResponse(booking.getItem()),
+                userMapper.userToResponse(booking.getBooker()));
     }
 
-    private Booking getBooking(Long bookingId) {
+    @Override
+    public Collection<BookingResponse> getUserBookings(Long bookerId, State state) {
+        Collection<Booking> bookings;
+        switch (state) {
+            case ALL -> bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(bookerId);
+            case CURRENT -> bookings = bookingRepository.findCurrentByBooker_Id(bookerId);
+            case PAST -> bookings = bookingRepository.findPastByBooker_Id(bookerId);
+            case FUTURE -> bookings = bookingRepository.findFutureByBooker_Id(bookerId);
+            case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.WAITING);
+            case REJECTED -> bookings = bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.REJECTED);
+            default -> throw new IllegalStateException("Unknown state");
+        }
+
+        return bookings.stream().map(booking ->
+                bookingMapper.bookingToResponse(
+                        booking,
+                        itemMapper.itemToResponse(booking.getItem()),
+                        userMapper.userToResponse(booking.getBooker()))
+        ).toList();
+    }
+
+    private Booking findBooking(Long bookingId) {
         Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
         if (bookingOpt.isPresent()) {
             return bookingOpt.get();
         } else {
-            throw new NotFoundException(String.format("Booking with id %d not found", bookingId));
+            throw new NotFoundException(String.format("Booking id=%d not found", bookingId));
         }
     }
 

@@ -56,6 +56,16 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalStateException(IllegalStateException e) {
+        return ErrorResponse.builder()
+                .error(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(400)
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(MethodArgumentNotValidException e) {
         return ErrorResponse.builder()
                 .error(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage())
