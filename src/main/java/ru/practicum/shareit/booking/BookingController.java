@@ -20,4 +20,12 @@ public class BookingController {
                                        @RequestHeader(value = "X-Sharer-User-Id") Long bookerId) {
         return bookingService.createBooking(createBookingRequest, bookerId);
     }
+
+    @PatchMapping("/{bookingId}")
+    @ResponseStatus(HttpStatus.OK)
+    MergeBookingResponse setApproved(@PathVariable Long bookingId,
+                                     @RequestParam Boolean approved,
+                                     @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+        return bookingService.setApproved(bookingId, approved, ownerId);
+    }
 }

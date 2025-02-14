@@ -5,4 +5,6 @@ import ru.practicum.shareit.booking.dto.MergeBookingResponse;
 
 public interface BookingService {
     MergeBookingResponse createBooking(CreateBookingRequest createBookingRequest, Long bookerId);
+
+    MergeBookingResponse setApproved(Long bookingId, Boolean approved, Long ownerId);
 }

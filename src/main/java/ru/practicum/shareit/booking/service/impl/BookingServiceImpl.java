@@ -6,10 +6,13 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.dto.CreateBookingRequest;
 import ru.practicum.shareit.booking.dto.MergeBookingResponse;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.InvalidDateException;
+import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.exception.exceptions.UnavailableItemBookingException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemResponse;
@@ -20,6 +23,7 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +48,42 @@ public class BookingServiceImpl implements BookingService {
                 bookingRepository.save(booking),
                 itemMapper.itemToResponse(item),
                 userMapper.userToResponse(booker));
+    }
+
+    @Override
+    public MergeBookingResponse setApproved(Long bookingId, Boolean approved, Long ownerId) {
+        Booking booking = getBooking(bookingId);
+        if (!booking.getItem().getOwner().getId().equals(ownerId)) {
+            throw new AuthorizationException(String.format("User %d is not owner of item %d", ownerId, bookingId));
+        }
+        if (Boolean.TRUE.equals(approved)) {
+            booking.setStatus(Status.APPROVED);
+        } else {
+            booking.setStatus(Status.REJECTED);
+        }
+
+        return bookingMapper.bookingToMergeResponse(
+                bookingRepository.save(booking),
+                itemMapper.itemToResponse(booking.getItem()),
+                userMapper.userToResponse(booking.getBooker()));
+    }
+
+    public BookingResponse getBookingResponse(Long bookingId) {
+        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+        if (bookingOpt.isPresent()) {
+            return bookingMapper.bookingToResponse(bookingOpt.get());
+        } else {
+            throw new NotFoundException(String.format("Booking with id %d not found", bookingId));
+        }
+    }
+
+    private Booking getBooking(Long bookingId) {
+        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+        if (bookingOpt.isPresent()) {
+            return bookingOpt.get();
+        } else {
+            throw new NotFoundException(String.format("Booking with id %d not found", bookingId));
+        }
     }
 
     private void validateBooking(Booking booking) {

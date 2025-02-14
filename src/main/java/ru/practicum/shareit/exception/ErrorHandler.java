@@ -75,12 +75,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAuthorizationException(AuthorizationException e) {
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .status(400)
+                .status(403)
                 .build();
     }
 
