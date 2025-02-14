@@ -147,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Item getItem(Long itemId) {
-        ItemResponse itemResponse = itemService.getItem(itemId);
+        ItemResponse itemResponse = itemService.findItem(itemId);
         User owner = userMapper.responseToUser(userService.getUser(itemResponse.getOwnerId()));
         return itemMapper.responseToItem(itemResponse, owner);
     }

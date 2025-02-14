@@ -2,20 +2,23 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.exceptions.UncompletedBookingCommentException;
+import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.dto.CreateItemRequest;
-import ru.practicum.shareit.item.dto.ItemResponse;
-import ru.practicum.shareit.item.dto.MergeItemResponse;
-import ru.practicum.shareit.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.item.dao.CommentRepository;
+import ru.practicum.shareit.item.dao.ItemRepository;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,9 @@ public class ItemServiceImpl implements ItemService {
     private final UserMapper userMapper;
     private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public MergeItemResponse createItem(CreateItemRequest createItemRequest, Long ownerId) {
@@ -47,13 +53,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemResponse getItem(Long itemId) {
-        Optional<Item> itemOpt = itemRepository.findById(itemId);
-        if (itemOpt.isPresent()) {
-            return itemMapper.itemToResponse(itemOpt.get());
-        } else {
-            throw new NotFoundException(String.format("Item with id %s not found", itemId));
-        }
+    public ItemResponse findItem(Long itemId) {
+        return itemMapper.itemToResponse(getItem(itemId));
     }
 
     @Override
@@ -68,8 +69,34 @@ public class ItemServiceImpl implements ItemService {
                 .map(itemMapper::itemToResponse).toList();
     }
 
+    @Override
+    public MergeCommentResponse addComment(CreateCommentRequest createCommentRequest, Long itemId, Long authorId) {
+        Item item = getItem(itemId);
+        User author = userMapper.responseToUser(userService.getUser(authorId));
+
+        if (bookingRepository.findPastByItem_IdAndBooker_Id(itemId, authorId).isEmpty()) {
+            throw new UncompletedBookingCommentException(String.format("Item id=%d completed booking of user id=%d not found", itemId, authorId));
+        }
+
+        Comment comment = commentMapper.createRequestToComment(createCommentRequest, item, author);
+        comment.setCreationDate(LocalDateTime.now());
+        return commentMapper.commentToMergeResponse(
+                commentRepository.save(comment),
+                itemMapper.itemToResponse(item),
+                author.getName());
+    }
+
+    private Item getItem(Long itemId) {
+        Optional<Item> itemOpt = itemRepository.findById(itemId);
+        if (itemOpt.isPresent()) {
+            return itemOpt.get();
+        } else {
+            throw new NotFoundException(String.format("Item with id %s not found", itemId));
+        }
+    }
+
     private Item getUpdatedOldItem(Item item, User owner) {
-        Item oldItem = itemMapper.responseToItem(getItem(item.getId()), owner);
+        Item oldItem = itemMapper.responseToItem(findItem(item.getId()), owner);
         if (!item.getOwner().getId()
                 .equals(oldItem.getOwner().getId())) {
             throw new AuthorizationException("Authorization failed");

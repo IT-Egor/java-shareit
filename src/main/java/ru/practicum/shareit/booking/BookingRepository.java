@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findAllByBooker_IdOrderByStartDateDesc(Long ownerId);
@@ -32,4 +33,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findFutureByOwner_Id(Long ownerId);
 
     Collection<Booking> findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(Long ownerId, Status status);
+
+
+    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.item.id = :itemId AND b.endDate < CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
+    Optional<Booking> findPastByItem_IdAndBooker_Id(Long itemId, Long bookerId);
 }
