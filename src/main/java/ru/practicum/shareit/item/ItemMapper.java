@@ -22,8 +22,10 @@ public interface ItemMapper {
     @Mapping(target = "id", source = "id")
     Item updateRequestToItem(UpdateItemRequest updateItemRequest, User owner, Long id);
 
+    @Mapping(target = "ownerId", source = "owner.id")
     MergeItemResponse itemToMergeResponse(Item item);
 
+    @Mapping(target = "ownerId", source = "owner.id")
     ItemResponse itemToResponse(Item item);
 
     @Mapping(target = "owner", source = "owner")

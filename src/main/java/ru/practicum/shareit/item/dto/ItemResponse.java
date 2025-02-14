@@ -14,4 +14,5 @@ public class ItemResponse {
     private String name;
     private String description;
     private Boolean available;
+    private Long ownerId;
 }
