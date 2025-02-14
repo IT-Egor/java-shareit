@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Collection<Booking> findAllByBooker_IdOrderByStartDateDesc(Long ownerId);
+    Collection<Booking> findAllByBooker_IdOrderByStartDateDesc(Long bookerId);
 
     @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.startDate < CURRENT_TIMESTAMP AND b.endDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
     Collection<Booking> findCurrentByBooker_Id(Long bookerId);

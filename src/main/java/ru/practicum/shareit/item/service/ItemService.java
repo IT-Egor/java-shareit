@@ -11,7 +11,9 @@ public interface ItemService {
 
     ItemResponse findItem(Long itemId);
 
-    List<ItemResponse> getAllUserItems(Long ownerId);
+    ItemResponseComments findItemWithComments(Long itemId);
+
+    List<ItemResponseBookingComments> getAllUserItems(Long ownerId);
 
     List<ItemResponse> searchItems(String query);
 

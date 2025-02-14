@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import ru.practicum.shareit.item.dto.ItemCommentResponse;
 import ru.practicum.shareit.item.dto.CreateCommentRequest;
 import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.dto.MergeCommentResponse;
@@ -23,4 +24,9 @@ public interface CommentMapper {
     @Mapping(target = "id", source = "comment.id")
     @Mapping(target = "created", source = "comment.creationDate")
     MergeCommentResponse commentToMergeResponse(Comment comment, ItemResponse item, String authorName);
+
+    @Mapping(target = "authorName", source = "comment.author.name")
+    @Mapping(target = "id", source = "comment.id")
+    @Mapping(target = "created", source = "comment.creationDate")
+    ItemCommentResponse commentToResponse(Comment comment);
 }

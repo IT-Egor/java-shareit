@@ -32,13 +32,13 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemResponse getItem(@PathVariable(required = false) Long itemId) {
-        return itemService.findItem(itemId);
+    public ItemResponseComments getItem(@PathVariable(required = false) Long itemId) {
+        return itemService.findItemWithComments(itemId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemResponse> getAllUserItems(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+    public List<ItemResponseBookingComments> getAllUserItems(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.getAllUserItems(ownerId);
     }
 

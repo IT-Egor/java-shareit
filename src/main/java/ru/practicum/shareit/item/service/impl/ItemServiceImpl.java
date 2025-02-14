@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
@@ -19,8 +20,11 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -58,9 +62,43 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponse> getAllUserItems(Long ownerId) {
-        return itemRepository.findItemsByOwnerId(ownerId).stream()
-                .map(itemMapper::itemToResponse).toList();
+    public ItemResponseComments findItemWithComments(Long itemId) {
+        Item item = getItem(itemId);
+        List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
+        List<ItemCommentResponse> itemCommentResponses = comments.stream().map(commentMapper::commentToResponse).toList();
+        return itemMapper.itemToResponseComments(item, itemCommentResponses);
+    }
+
+    @Override
+    public List<ItemResponseBookingComments> getAllUserItems(Long ownerId) {
+        List<Item> items = itemRepository.findItemsByOwnerId(ownerId);
+        List<Booking> bookings = new ArrayList<>(bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(ownerId));
+        List<Comment> comments = commentRepository.findAllByItem_Owner_Id(ownerId);
+
+        Map<Long, List<Booking>> bookingsByItemId = bookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+        Map<Long, List<Comment>> commentsByItemId = comments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
+
+        return items.stream()
+                .map(item -> {
+                    List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), List.of());
+                    LocalDateTime nextBooking = itemBookings.stream()
+                            .map(Booking::getStartDate)
+                            .filter(date -> date.isAfter(LocalDateTime.now()))
+                            .min(LocalDateTime::compareTo)
+                            .orElse(null);
+                    LocalDateTime lastBooking = itemBookings.stream()
+                            .map(Booking::getStartDate)
+                            .filter(date -> date.isBefore(LocalDateTime.now()))
+                            .max(LocalDateTime::compareTo)
+                            .orElse(null);
+                    List<ItemCommentResponse> itemComments = commentsByItemId.getOrDefault(item.getId(), List.of())
+                            .stream()
+                            .map(commentMapper::commentToResponse)
+                            .toList();
+                    return itemMapper.itemToResponseBookingComments(item, nextBooking, lastBooking, itemComments);
+                }).toList();
     }
 
     @Override
