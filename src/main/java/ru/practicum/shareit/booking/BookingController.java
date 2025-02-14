@@ -42,8 +42,15 @@ public class BookingController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    Collection<BookingResponse> getUserBookings(@RequestHeader(value = "X-Sharer-User-Id") Long bookerId,
+    Collection<BookingResponse> getBookerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long bookerId,
                                                    @RequestParam(required = false, defaultValue = "ALL") State state) {
-        return bookingService.getUserBookings(bookerId, state);
+        return bookingService.getBookerBookings(bookerId, state);
+    }
+
+    @GetMapping("/owner")
+    @ResponseStatus(HttpStatus.OK)
+    Collection<BookingResponse> getOwnerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId,
+                                                 @RequestParam(required = false, defaultValue = "ALL") State state) {
+        return bookingService.getOwnerBookings(ownerId, state);
     }
 }

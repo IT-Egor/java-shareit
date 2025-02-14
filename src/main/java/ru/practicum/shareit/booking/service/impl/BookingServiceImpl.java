@@ -81,15 +81,38 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingResponse> getUserBookings(Long bookerId, State state) {
+    public Collection<BookingResponse> getBookerBookings(Long bookerId, State state) {
+        userService.getUser(bookerId);
         Collection<Booking> bookings;
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(bookerId);
             case CURRENT -> bookings = bookingRepository.findCurrentByBooker_Id(bookerId);
             case PAST -> bookings = bookingRepository.findPastByBooker_Id(bookerId);
             case FUTURE -> bookings = bookingRepository.findFutureByBooker_Id(bookerId);
-            case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.WAITING);
-            case REJECTED -> bookings = bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.REJECTED);
+            case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.WAITING);
+            case REJECTED -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.REJECTED);
+            default -> throw new IllegalStateException("Unknown state");
+        }
+
+        return bookings.stream().map(booking ->
+                bookingMapper.bookingToResponse(
+                        booking,
+                        itemMapper.itemToResponse(booking.getItem()),
+                        userMapper.userToResponse(booking.getBooker()))
+        ).toList();
+    }
+
+    @Override
+    public Collection<BookingResponse> getOwnerBookings(Long ownerId, State state) {
+        userService.getUser((ownerId));
+        Collection<Booking> bookings;
+        switch (state) {
+            case ALL -> bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(ownerId);
+            case CURRENT -> bookings = bookingRepository.findCurrentByOwner_Id(ownerId);
+            case PAST -> bookings = bookingRepository.findPastByOwner_Id(ownerId);
+            case FUTURE -> bookings = bookingRepository.findFutureByOwner_Id(ownerId);
+            case WAITING -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.WAITING);
+            case REJECTED -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.REJECTED);
             default -> throw new IllegalStateException("Unknown state");
         }
 
