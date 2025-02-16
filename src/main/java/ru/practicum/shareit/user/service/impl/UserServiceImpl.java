@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.CreateUserRequest;
-import ru.practicum.shareit.user.dto.MergeUserResponse;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserResponse;
 import ru.practicum.shareit.user.service.UserService;
@@ -23,10 +22,10 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public MergeUserResponse createUser(CreateUserRequest createUserRequest) {
+    public UserResponse createUser(CreateUserRequest createUserRequest) {
         try {
             User user = userMapper.createRequestToUser(createUserRequest);
-            return userMapper.userToMergeResponse(userRepository.save(user));
+            return userMapper.userToResponse(userRepository.save(user));
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("users_email_key")) {
                 throw new EmailAlreadyExistsException(String.format("User with email %s already exists", createUserRequest.getEmail()));
@@ -37,12 +36,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MergeUserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
+    public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         try {
             User user = userMapper.updateRequestToUser(updateUserRequest, userId);
             User oldUser = getUpdatedOldUser(user);
-            userRepository.save(oldUser);
-            return userMapper.responseToMergeUserResponse(getUser(userId));
+            return userMapper.userToResponse(userRepository.save(oldUser));
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("users_email_key")) {
                 throw new EmailAlreadyExistsException(String.format("User with email %s already exists", updateUserRequest.getEmail()));

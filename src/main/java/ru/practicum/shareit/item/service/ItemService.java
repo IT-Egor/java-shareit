@@ -5,9 +5,9 @@ import ru.practicum.shareit.item.dto.*;
 import java.util.List;
 
 public interface ItemService {
-    MergeItemResponse createItem(CreateItemRequest createItemRequest, Long ownerId);
+    ItemResponse createItem(CreateItemRequest createItemRequest, Long ownerId);
 
-    MergeItemResponse updateItem(Long itemId, UpdateItemRequest updateItemRequest, Long ownerId);
+    ItemResponse updateItem(Long itemId, UpdateItemRequest updateItemRequest, Long ownerId);
 
     ItemResponse findItem(Long itemId);
 

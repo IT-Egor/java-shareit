@@ -38,22 +38,22 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public MergeItemResponse createItem(CreateItemRequest createItemRequest, Long ownerId) {
+    public ItemResponse createItem(CreateItemRequest createItemRequest, Long ownerId) {
         User user = userMapper.responseToUser(userService.getUser(ownerId));
         Item item = itemMapper.createRequestToItem(createItemRequest, user);
 
-        return itemMapper.itemToMergeResponse(itemRepository.save(item));
+        return itemMapper.itemToResponse(itemRepository.save(item));
     }
 
     @Override
-    public MergeItemResponse updateItem(Long itemId, UpdateItemRequest updateItemRequest, Long ownerId) {
+    public ItemResponse updateItem(Long itemId, UpdateItemRequest updateItemRequest, Long ownerId) {
         User owner = userMapper.responseToUser(userService.getUser(ownerId));
         Item item = itemMapper.updateRequestToItem(updateItemRequest, owner, itemId);
 
         Item oldItem = getUpdatedOldItem(item, owner);
         itemRepository.save(oldItem);
 
-        return itemMapper.itemToMergeResponse(item);
+        return itemMapper.itemToResponse(item);
     }
 
     @Override

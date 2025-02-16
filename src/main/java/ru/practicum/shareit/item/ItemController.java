@@ -17,14 +17,14 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MergeItemResponse createItem(@Valid @RequestBody CreateItemRequest createItemRequest,
+    public ItemResponse createItem(@Valid @RequestBody CreateItemRequest createItemRequest,
                                         @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.createItem(createItemRequest, ownerId);
     }
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public MergeItemResponse updateItem(@Valid @RequestBody UpdateItemRequest updateItemRequest,
+    public ItemResponse updateItem(@Valid @RequestBody UpdateItemRequest updateItemRequest,
                                         @PathVariable Long itemId,
                                         @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.updateItem(itemId, updateItemRequest, ownerId);

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.dto.CreateBookingRequest;
-import ru.practicum.shareit.booking.dto.MergeBookingResponse;
+import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.InvalidDateException;
@@ -34,7 +34,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserMapper userMapper;
 
     @Override
-    public MergeBookingResponse createBooking(CreateBookingRequest createBookingRequest, Long bookerId) {
+    public BookingResponse createBooking(CreateBookingRequest createBookingRequest, Long bookerId) {
         User booker = userMapper.responseToUser(userService.getUser(bookerId));
         Item item = getItem(createBookingRequest.getItemId());
 
@@ -42,14 +42,14 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(Status.WAITING);
         validateBooking(booking);
 
-        return bookingMapper.bookingToMergeResponse(
+        return bookingMapper.bookingToResponse(
                 bookingRepository.save(booking),
                 itemMapper.itemToResponse(item),
                 userMapper.userToResponse(booker));
     }
 
     @Override
-    public MergeBookingResponse setApproved(Long bookingId, Boolean approved, Long ownerId) {
+    public BookingResponse setApproved(Long bookingId, Boolean approved, Long ownerId) {
         Booking booking = findBooking(bookingId);
         if (!booking.getItem().getOwner().getId().equals(ownerId)) {
             throw new AuthorizationException(String.format("User id=%d is not owner of item id=%d", ownerId, bookingId));
@@ -60,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
 
-        return bookingMapper.bookingToMergeResponse(
+        return bookingMapper.bookingToResponse(
                 bookingRepository.save(booking),
                 itemMapper.itemToResponse(booking.getItem()),
                 userMapper.userToResponse(booking.getBooker()));
