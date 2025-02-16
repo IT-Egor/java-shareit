@@ -1,12 +1,16 @@
 package ru.practicum.shareit.exception;
 
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.exceptions.*;
+import ru.practicum.shareit.exception.exceptions.AuthorizationException;
+import ru.practicum.shareit.exception.exceptions.EmailAlreadyExistsException;
+import ru.practicum.shareit.exception.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.exceptions.UnavailableItemBookingException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -46,16 +50,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidDateException(InvalidDateException e) {
-        return ErrorResponse.builder()
-                .error(e.getMessage())
-                .timestamp(LocalDateTime.now())
-                .status(400)
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalStateException(IllegalStateException e) {
         return ErrorResponse.builder()
                 .error(e.getMessage())
@@ -66,7 +60,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUncompletedBookingCommentException(UncompletedBookingCommentException e) {
+    public ErrorResponse handleValidationException(ValidationException e) {
         return ErrorResponse.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
@@ -76,7 +70,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(MethodArgumentNotValidException e) {
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return ErrorResponse.builder()
                 .error(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage())
                 .timestamp(LocalDateTime.now())

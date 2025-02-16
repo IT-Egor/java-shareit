@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item.service.impl;
 
+import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.exceptions.AuthorizationException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
-import ru.practicum.shareit.exception.exceptions.UncompletedBookingCommentException;
 import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.CommentRepository;
@@ -114,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
         User author = userMapper.responseToUser(userService.getUser(authorId));
 
         if (bookingRepository.findPastByItem_IdAndBooker_Id(itemId, authorId).isEmpty()) {
-            throw new UncompletedBookingCommentException(String.format("Item id=%d completed booking of user id=%d not found", itemId, authorId));
+            throw new ValidationException(String.format("Item id=%d completed booking of user id=%d not found", itemId, authorId));
         }
 
         Comment comment = commentMapper.createRequestToComment(createCommentRequest, item, author);

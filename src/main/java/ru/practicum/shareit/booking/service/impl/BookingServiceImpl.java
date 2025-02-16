@@ -1,14 +1,13 @@
 package ru.practicum.shareit.booking.service.impl;
 
+import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.dto.CreateBookingRequest;
-import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.exceptions.AuthorizationException;
-import ru.practicum.shareit.exception.exceptions.InvalidDateException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.exception.exceptions.UnavailableItemBookingException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -138,9 +137,9 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime end = booking.getEndDate();
 
         if (start.isAfter(end)) {
-            throw new InvalidDateException("Start date is after end date");
+            throw new ValidationException("Start date is after end date");
         } else if (start.equals(end)) {
-            throw new InvalidDateException("Start date equals end date");
+            throw new ValidationException("Start date equals end date");
         } else if (Boolean.FALSE.equals(booking.getItem().getAvailable())) {
             throw new UnavailableItemBookingException(String.format("Item %d is not available", booking.getItem().getId()));
         }
