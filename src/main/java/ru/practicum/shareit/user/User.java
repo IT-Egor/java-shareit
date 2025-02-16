@@ -12,10 +12,14 @@ import lombok.ToString;
 @Table(name = "users")
 public class User {
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
     @Override
