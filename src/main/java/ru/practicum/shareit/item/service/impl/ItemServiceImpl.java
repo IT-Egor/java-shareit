@@ -80,17 +80,18 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<Comment>> commentsByItemId = comments.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
 
+        LocalDateTime now = LocalDateTime.now();
         return items.stream()
                 .map(item -> {
                     List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), List.of());
                     LocalDateTime nextBooking = itemBookings.stream()
                             .map(Booking::getStartDate)
-                            .filter(date -> date.isAfter(LocalDateTime.now()))
+                            .filter(date -> date.isAfter(now))
                             .min(LocalDateTime::compareTo)
                             .orElse(null);
                     LocalDateTime lastBooking = itemBookings.stream()
                             .map(Booking::getStartDate)
-                            .filter(date -> date.isBefore(LocalDateTime.now()))
+                            .filter(date -> date.isBefore(now))
                             .max(LocalDateTime::compareTo)
                             .orElse(null);
                     List<ItemCommentResponse> itemComments = commentsByItemId.getOrDefault(item.getId(), List.of())
