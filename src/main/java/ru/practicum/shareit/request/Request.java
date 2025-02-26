@@ -1,40 +1,34 @@
 package ru.practicum.shareit.request;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.shareit.user.User;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
-@ToString
+@Entity
 @Table(name = "requests")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotNull
+    @Column(name = "description", nullable = false)
     private String description;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requestor_id", nullable = false)
     private User requester;
 
-    @Column(name = "creation_date")
-    private LocalDate creationDate;
+    @NotNull
+    @Column(name = "creation_date", nullable = false)
+    private LocalDateTime creationDate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Request)) return false;
-        return id != null && id.equals(((Request) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
