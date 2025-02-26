@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MergeItemResponse {
+public class ItemCommentResponse {
     private Long id;
-    private String name;
-    private String description;
-    private Boolean available;
+    private String text;
+    private String authorName;
+    private LocalDateTime created;
 }
