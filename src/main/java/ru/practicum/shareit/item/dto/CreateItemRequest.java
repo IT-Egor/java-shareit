@@ -2,7 +2,11 @@ package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+
+import java.util.Optional;
 
 @Data
 public class CreateItemRequest {
@@ -14,4 +18,11 @@ public class CreateItemRequest {
 
     @NotNull(message = "Available is required")
     private Boolean available;
+
+    @Getter(AccessLevel.NONE)
+    private Long requestId;
+
+    public Optional<Long> getRequestId() {
+        return Optional.ofNullable(requestId);
+    }
 }

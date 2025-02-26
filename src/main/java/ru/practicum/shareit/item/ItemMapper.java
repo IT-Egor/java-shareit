@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,9 @@ public interface ItemMapper {
     @Mapping(target = "owner", source = "owner")
     @Mapping(target = "name", source = "createItemRequest.name")
     @Mapping(target = "id", ignore = true)
-    Item createRequestToItem(CreateItemRequest createItemRequest, User owner);
+    @Mapping(target = "request", source = "request")
+    @Mapping(target = "description", source = "createItemRequest.description")
+    Item createRequestToItem(CreateItemRequest createItemRequest, User owner, Request request);
 
     @Mapping(target = "owner", source = "owner")
     @Mapping(target = "name", source = "updateItemRequest.name")
@@ -24,6 +27,7 @@ public interface ItemMapper {
     Item updateRequestToItem(UpdateItemRequest updateItemRequest, User owner, Long id);
 
     @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "requestId", source = "request.id")
     ItemResponse itemToResponse(Item item);
 
     @Mapping(target = "owner", source = "owner")
