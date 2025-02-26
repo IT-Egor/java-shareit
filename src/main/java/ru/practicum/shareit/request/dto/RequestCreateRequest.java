@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestCreateRequest {
+public class RequestCreateRequest {
     private String description;
 }

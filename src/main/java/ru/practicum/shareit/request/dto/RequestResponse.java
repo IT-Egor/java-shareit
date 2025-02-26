@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestResponse {
+public class RequestResponse {
     private Long id;
     private String description;
     private Long requesterId;
-    private LocalDateTime creationDate;
+    private LocalDateTime created;
 }
