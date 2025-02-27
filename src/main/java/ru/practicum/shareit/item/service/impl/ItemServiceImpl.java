@@ -16,7 +16,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.Request;
-import ru.practicum.shareit.request.dao.RequestRepository;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
@@ -112,6 +112,13 @@ public class ItemServiceImpl implements ItemService {
                             .toList();
                     return itemMapper.itemToResponseBookingComments(item, nextBooking, lastBooking, itemComments);
                 }).toList();
+    }
+
+    @Override
+    public List<ItemResponse> findItemsByRequestIds(List<Long> requestIds) {
+        return itemRepository.findItemsByRequest_IdIn(requestIds).stream()
+                .map(itemMapper::itemToResponse)
+                .toList();
     }
 
     @Override

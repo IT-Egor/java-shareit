@@ -18,4 +18,6 @@ public interface ItemService {
     List<ItemResponse> searchItems(String query);
 
     MergeCommentResponse addComment(CreateCommentRequest createCommentRequest, Long itemId, Long authorId);
+
+    List<ItemResponse> findItemsByRequestIds(List<Long> requestIds);
 }
