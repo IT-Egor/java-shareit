@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.Request;
@@ -18,6 +19,7 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,5 +53,24 @@ public class RequestServiceImpl implements RequestService {
                                 answersByRequestId.getOrDefault(request.getId(), List.of())
                         )
                 ).toList();
+    }
+
+    @Override
+    public List<RequestResponse> findAllRequests() {
+        return requestRepository.findAllOrderByCreationDateDesc().stream()
+                .map(requestMapper::requestToResponse)
+                .toList();
+    }
+
+    @Override
+    public RequestWithAnswersResponse findRequestById(Long id) {
+        Optional<Request> requestOpt = requestRepository.findById(id);
+        if (requestOpt.isPresent()) {
+            Request request = requestOpt.get();
+            List<ItemResponse> answers = itemService.findItemsByRequestIds(List.of(id));
+            return requestMapper.requestToResponseWithAnswers(request, answers);
+        } else {
+            throw new NotFoundException(String.format("Request with id=%s not found", id));
+        }
     }
 }

@@ -21,7 +21,7 @@ public interface RequestMapper {
     @Mapping(target = "created", source = "request.creationDate")
     RequestResponse requestToResponse(Request request);
 
-    @Mapping(target = "answers", source = "answers")
+    @Mapping(target = "items", source = "answers")
     @Mapping(target = "created", source = "request.creationDate")
     RequestWithAnswersResponse requestToResponseWithAnswers(Request request, List<ItemResponse> answers);
 }

@@ -14,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestWithAnswersResponse {
+    private Long id;
     private String description;
     private LocalDateTime created;
-    private List<ItemResponse> answers;
+    private List<ItemResponse> items;
 }

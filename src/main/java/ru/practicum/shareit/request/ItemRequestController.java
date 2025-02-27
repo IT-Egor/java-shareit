@@ -29,4 +29,16 @@ public class ItemRequestController {
     public List<RequestWithAnswersResponse> getUserRequests(@RequestHeader(name = "X-Sharer-User-Id") Long requesterId) {
         return requestService.findAllUserRequests(requesterId);
     }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RequestResponse> getAllRequests() {
+        return requestService.findAllRequests();
+    }
+
+    @GetMapping("/{requestId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RequestWithAnswersResponse getRequestById(@PathVariable Long requestId) {
+        return requestService.findRequestById(requestId);
+    }
 }

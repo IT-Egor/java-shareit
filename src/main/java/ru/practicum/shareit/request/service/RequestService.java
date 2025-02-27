@@ -10,4 +10,8 @@ public interface RequestService {
     RequestResponse createRequest(RequestCreateRequest itemRequestCreateRequest, Long requesterId);
 
     List<RequestWithAnswersResponse> findAllUserRequests(Long requesterId);
+
+    List<RequestResponse> findAllRequests();
+
+    RequestWithAnswersResponse findRequestById(Long id);
 }
