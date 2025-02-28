@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +17,22 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    BookingResponse createBooking(@Valid @RequestBody CreateBookingRequest createBookingRequest,
-                                       @RequestHeader(value = "X-Sharer-User-Id") Long bookerId) {
+    public BookingResponse createBooking(@RequestBody CreateBookingRequest createBookingRequest,
+                                  @RequestHeader(value = "X-Sharer-User-Id") Long bookerId) {
         return bookingService.createBooking(createBookingRequest, bookerId);
     }
 
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    BookingResponse setApproved(@PathVariable Long bookingId,
-                                     @RequestParam Boolean approved,
-                                     @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+    public BookingResponse setApproved(@PathVariable Long bookingId,
+                                @RequestParam Boolean approved,
+                                @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return bookingService.setApproved(bookingId, approved, ownerId);
     }
 
     @GetMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    BookingResponse getBooking(@PathVariable Long bookingId,
+    public BookingResponse getBooking(@PathVariable Long bookingId,
                                @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
 
         return bookingService.getBooking(bookingId, userId);
@@ -41,14 +40,14 @@ public class BookingController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    Collection<BookingResponse> getBookerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long bookerId,
-                                                   @RequestParam(required = false, defaultValue = "ALL") State state) {
+    public Collection<BookingResponse> getBookerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long bookerId,
+                                                  @RequestParam(required = false, defaultValue = "ALL") State state) {
         return bookingService.getBookerBookings(bookerId, state);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
-    Collection<BookingResponse> getOwnerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId,
+    public Collection<BookingResponse> getOwnerBookings(@RequestHeader(value = "X-Sharer-User-Id") Long ownerId,
                                                  @RequestParam(required = false, defaultValue = "ALL") State state) {
         return bookingService.getOwnerBookings(ownerId, state);
     }

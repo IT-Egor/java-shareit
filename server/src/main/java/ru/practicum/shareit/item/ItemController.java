@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +16,16 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemResponse createItem(@Valid @RequestBody CreateItemRequest createItemRequest,
-                                        @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+    public ItemResponse createItem(@RequestBody CreateItemRequest createItemRequest,
+                                   @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.createItem(createItemRequest, ownerId);
     }
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemResponse updateItem(@Valid @RequestBody UpdateItemRequest updateItemRequest,
-                                        @PathVariable Long itemId,
-                                        @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
+    public ItemResponse updateItem(@RequestBody UpdateItemRequest updateItemRequest,
+                                   @PathVariable Long itemId,
+                                   @RequestHeader(value = "X-Sharer-User-Id") Long ownerId) {
         return itemService.updateItem(itemId, updateItemRequest, ownerId);
     }
 
@@ -50,7 +49,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.CREATED)
-    public MergeCommentResponse addComment(@Valid @RequestBody CreateCommentRequest createCommentRequest,
+    public MergeCommentResponse addComment(@RequestBody CreateCommentRequest createCommentRequest,
                                            @PathVariable Long itemId,
                                            @RequestHeader(value = "X-Sharer-User-Id") Long authorId) {
         return itemService.addComment(createCommentRequest, itemId, authorId);

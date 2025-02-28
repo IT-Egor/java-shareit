@@ -28,25 +28,25 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getAllUserItems(Long ownerId) {
-        return get("", ownerId);
-    }
-
-    public ResponseEntity<Object> getItem(Long itemId, Long ownerId) {
-        return get("/" + itemId, ownerId);
-    }
-
-    public ResponseEntity<Object> searchItems(String text, Long ownerId) {
-        Map<String, Object> parameters = Map.of("text", text);
-        return get("/search?text={text}", ownerId, parameters);
-    }
-
     public ResponseEntity<Object> createItem(CreateItemRequest createItemRequest, Long ownerId) {
         return post("", ownerId, createItemRequest);
     }
 
     public ResponseEntity<Object> updateItem(UpdateItemRequest updateItemRequest, Long ownerId, Long itemId) {
         return patch("/" + itemId, ownerId, updateItemRequest);
+    }
+
+    public ResponseEntity<Object> getItem(Long itemId, Long ownerId) {
+        return get("/" + itemId, ownerId);
+    }
+
+    public ResponseEntity<Object> getAllUserItems(Long ownerId) {
+        return get("", ownerId);
+    }
+
+    public ResponseEntity<Object> searchItems(String text, Long ownerId) {
+        Map<String, Object> parameters = Map.of("text", text);
+        return get("/search?text={text}", ownerId, parameters);
     }
 
     public ResponseEntity<Object> addComment(CreateCommentRequest createCommentRequest, Long authorId, Long itemId) {
