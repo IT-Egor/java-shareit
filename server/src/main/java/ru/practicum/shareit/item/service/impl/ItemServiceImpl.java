@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
         User owner = userMapper.responseToUser(userService.getUser(ownerId));
         Item item = itemMapper.updateRequestToItem(updateItemRequest, owner, itemId);
 
-        Item oldItem = getUpdatedOldItem(item, owner);
+        Item oldItem = getUpdatedOldItem(item);
         itemRepository.save(oldItem);
 
         return itemMapper.itemToResponse(item);
@@ -153,8 +153,8 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private Item getUpdatedOldItem(Item item, User owner) {
-        Item oldItem = itemMapper.responseToItem(findItem(item.getId()), owner);
+    private Item getUpdatedOldItem(Item item) {
+        Item oldItem = getItem(item.getId());
         if (!item.getOwner().getId()
                 .equals(oldItem.getOwner().getId())) {
             throw new AuthorizationException("Authorization failed");
