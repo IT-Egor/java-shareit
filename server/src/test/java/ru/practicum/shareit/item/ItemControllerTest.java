@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,16 +33,17 @@ public class ItemControllerTest {
     @Test
     void testCreateItem() throws Exception {
         CreateItemRequest createItemRequest = CreateItemRequest.builder()
-                .name("Test Item")
-                .description("Test Description")
+                .name("item name test")
+                .description("item description test")
                 .available(true)
                 .build();
 
         ItemResponse itemResponse = ItemResponse.builder()
                 .id(1L)
-                .name("Test Item")
-                .description("Test Description")
+                .name("item name test")
+                .description("item description test")
                 .available(true)
+                .ownerId(1L)
                 .build();
 
         Mockito.when(itemService.createItem(Mockito.any(CreateItemRequest.class), Mockito.eq(1L))).thenReturn(itemResponse);
@@ -52,24 +54,26 @@ public class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(createItemRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Item"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.available").value(true));
+                .andExpect(jsonPath("$.name").value("item name test"))
+                .andExpect(jsonPath("$.description").value("item description test"))
+                .andExpect(jsonPath("$.available").value(true))
+                .andExpect(jsonPath("$.ownerId").value(1L));
     }
 
     @Test
     void testUpdateItem() throws Exception {
         UpdateItemRequest updateItemRequest = UpdateItemRequest.builder()
-                .name("Updated Test Item")
-                .description("Updated Test Description")
+                .name("updated item name test")
+                .description("updated item description test")
                 .available(false)
                 .build();
 
         ItemResponse itemResponse = ItemResponse.builder()
                 .id(1L)
-                .name("Updated Test Item")
-                .description("Updated Test Description")
+                .name("updated item name test")
+                .description("updated item description test")
                 .available(false)
+                .ownerId(1L)
                 .build();
 
         Mockito.when(itemService.updateItem(Mockito.eq(1L), Mockito.any(UpdateItemRequest.class), Mockito.eq(1L))).thenReturn(itemResponse);
@@ -80,18 +84,20 @@ public class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(updateItemRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Updated Test Item"))
-                .andExpect(jsonPath("$.description").value("Updated Test Description"))
-                .andExpect(jsonPath("$.available").value(false));
+                .andExpect(jsonPath("$.name").value("updated item name test"))
+                .andExpect(jsonPath("$.description").value("updated item description test"))
+                .andExpect(jsonPath("$.available").value(false))
+                .andExpect(jsonPath("$.ownerId").value(1L));
     }
 
     @Test
     void testGetItem() throws Exception {
         ItemResponseComments itemResponse = ItemResponseComments.builder()
                 .id(1L)
-                .name("Test Item")
-                .description("Test Description")
+                .name("item name test")
+                .description("item description test")
                 .available(true)
+                .ownerId(1L)
                 .build();
 
         Mockito.when(itemService.findItemWithComments(1L)).thenReturn(itemResponse);
@@ -100,18 +106,20 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Item"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.available").value(true));
+                .andExpect(jsonPath("$.name").value("item name test"))
+                .andExpect(jsonPath("$.description").value("item description test"))
+                .andExpect(jsonPath("$.available").value(true))
+                .andExpect(jsonPath("$.ownerId").value(1L));
     }
 
     @Test
     void testGetAllUserItems() throws Exception {
         ItemResponseBookingComments itemResponse = ItemResponseBookingComments.builder()
                 .id(1L)
-                .name("Test Item")
-                .description("Test Description")
+                .name("item name test")
+                .description("item description test")
                 .available(true)
+                .ownerId(1L)
                 .build();
 
         Mockito.when(itemService.getAllUserItems(1L)).thenReturn(List.of(itemResponse));
@@ -121,18 +129,20 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].name").value("Test Item"))
-                .andExpect(jsonPath("$[0].description").value("Test Description"))
-                .andExpect(jsonPath("$[0].available").value(true));
+                .andExpect(jsonPath("$[0].name").value("item name test"))
+                .andExpect(jsonPath("$[0].description").value("item description test"))
+                .andExpect(jsonPath("$[0].available").value(true))
+                .andExpect(jsonPath("$[0].ownerId").value(1L));
     }
 
     @Test
     void testSearchItems() throws Exception {
         ItemResponse itemResponse = ItemResponse.builder()
                 .id(1L)
-                .name("Test Item")
-                .description("Test Description")
+                .name("item name test")
+                .description("item description test")
                 .available(true)
+                .ownerId(1L)
                 .build();
 
         Mockito.when(itemService.searchItems("test")).thenReturn(List.of(itemResponse));
@@ -142,21 +152,23 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].name").value("Test Item"))
-                .andExpect(jsonPath("$[0].description").value("Test Description"))
-                .andExpect(jsonPath("$[0].available").value(true));
+                .andExpect(jsonPath("$[0].name").value("item name test"))
+                .andExpect(jsonPath("$[0].description").value("item description test"))
+                .andExpect(jsonPath("$[0].available").value(true))
+                .andExpect(jsonPath("$[0].ownerId").value(1L));
     }
 
     @Test
     void testAddComment() throws Exception {
         CreateCommentRequest createCommentRequest = CreateCommentRequest.builder()
-                .text("Test Comment")
+                .text("comment text test")
                 .build();
 
         MergeCommentResponse commentResponse = MergeCommentResponse.builder()
                 .id(1L)
-                .text("Test Comment")
-                .authorName("Test Author")
+                .text("comment text test")
+                .authorName("author name test")
+                .created(LocalDateTime.now())
                 .build();
 
         Mockito.when(itemService.addComment(Mockito.any(CreateCommentRequest.class), Mockito.eq(1L), Mockito.eq(1L))).thenReturn(commentResponse);
@@ -167,7 +179,7 @@ public class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(createCommentRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.text").value("Test Comment"))
-                .andExpect(jsonPath("$.authorName").value("Test Author"));
+                .andExpect(jsonPath("$.text").value("comment text test"))
+                .andExpect(jsonPath("$.authorName").value("author name test"));
     }
 }
