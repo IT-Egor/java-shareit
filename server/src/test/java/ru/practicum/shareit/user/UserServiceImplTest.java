@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.service.impl;
+package ru.practicum.shareit.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,15 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
 import ru.practicum.shareit.exception.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.CreateUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserResponse;
+import ru.practicum.shareit.user.service.impl.UserServiceImpl;
 
 import java.util.Optional;
 
@@ -72,10 +69,11 @@ public class UserServiceImplTest {
 
     @Test
     void shouldThrowEmailAlreadyExistsExceptionWhenCreatingUserWithExistingEmail() {
-        when(userRepository.save(any(User.class))).thenThrow(new DataIntegrityViolationException("users_email_key"));
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
         assertThatThrownBy(() -> userService.createUser(createUserRequest))
                 .isInstanceOf(EmailAlreadyExistsException.class);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(0)).save(any(User.class));
+        verify(userRepository, times(1)).existsByEmail(any(String.class));
     }
 
     @Test
@@ -90,12 +88,12 @@ public class UserServiceImplTest {
 
     @Test
     void shouldThrowEmailAlreadyExistsExceptionWhenUpdatingUserWithExistingEmail() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenThrow(new DataIntegrityViolationException("users_email_key"));
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
         assertThatThrownBy(() -> userService.updateUser(user.getId(), updateUserRequest))
                 .isInstanceOf(EmailAlreadyExistsException.class);
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(0)).findById(anyLong());
+        verify(userRepository, times(0)).save(any(User.class));
+        verify(userRepository, times(1)).existsByEmail(any(String.class));
     }
 
     @Test

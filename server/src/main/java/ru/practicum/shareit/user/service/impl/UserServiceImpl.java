@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
@@ -23,31 +22,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(CreateUserRequest createUserRequest) {
-        try {
-            User user = userMapper.createRequestToUser(createUserRequest);
-            return userMapper.userToResponse(userRepository.save(user));
-        } catch (DataIntegrityViolationException e) {
-            if (e.getMessage().contains("users_email_key")) {
-                throw new EmailAlreadyExistsException(String.format("User with email %s already exists", createUserRequest.getEmail()));
-            } else {
-                throw e;
-            }
+        if (userRepository.existsByEmail(createUserRequest.getEmail())) {
+            throw new EmailAlreadyExistsException(
+                    String.format("User with email %s already exists", createUserRequest.getEmail())
+            );
         }
+        User user = userMapper.createRequestToUser(createUserRequest);
+        return userMapper.userToResponse(userRepository.save(user));
     }
 
     @Override
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
-        try {
-            User user = userMapper.updateRequestToUser(updateUserRequest, userId);
-            User oldUser = getUpdatedOldUser(user);
-            return userMapper.userToResponse(userRepository.save(oldUser));
-        } catch (DataIntegrityViolationException e) {
-            if (e.getMessage().contains("users_email_key")) {
-                throw new EmailAlreadyExistsException(String.format("User with email %s already exists", updateUserRequest.getEmail()));
-            } else {
-                throw e;
-            }
+        if (userRepository.existsByEmail(updateUserRequest.getEmail())) {
+            throw new EmailAlreadyExistsException(
+                    String.format("User with email %s already exists", updateUserRequest.getEmail())
+            );
         }
+        User user = userMapper.updateRequestToUser(updateUserRequest, userId);
+        User oldUser = getUpdatedOldUser(user);
+        return userMapper.userToResponse(userRepository.save(oldUser));
     }
 
     @Override
