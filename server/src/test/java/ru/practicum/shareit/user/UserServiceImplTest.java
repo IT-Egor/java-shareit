@@ -72,7 +72,7 @@ public class UserServiceImplTest {
         when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
         assertThatThrownBy(() -> userService.createUser(createUserRequest))
                 .isInstanceOf(EmailAlreadyExistsException.class);
-        verify(userRepository, times(0)).save(any(User.class));
+        verify(userRepository, never()).save(any(User.class));
         verify(userRepository, times(1)).existsByEmail(any(String.class));
     }
 
@@ -91,8 +91,8 @@ public class UserServiceImplTest {
         when(userRepository.existsByEmail(any(String.class))).thenReturn(true);
         assertThatThrownBy(() -> userService.updateUser(user.getId(), updateUserRequest))
                 .isInstanceOf(EmailAlreadyExistsException.class);
-        verify(userRepository, times(0)).findById(anyLong());
-        verify(userRepository, times(0)).save(any(User.class));
+        verify(userRepository, never()).findById(anyLong());
+        verify(userRepository, never()).save(any(User.class));
         verify(userRepository, times(1)).existsByEmail(any(String.class));
     }
 
