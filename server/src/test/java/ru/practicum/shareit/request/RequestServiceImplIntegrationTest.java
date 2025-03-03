@@ -97,11 +97,12 @@ class RequestServiceImplIntegrationTest {
         RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
                 .description("test description")
                 .build();
-        requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
 
         List<RequestWithAnswersResponse> userRequests = requestService.findAllUserRequests(userResponse.getId());
 
         assertThat(userRequests).hasSize(1);
+        assertThat(userRequests.get(0).getId()).isEqualTo(requestResponse.getId());
         assertThat(userRequests.get(0).getDescription()).isEqualTo("test description");
     }
 
@@ -110,11 +111,12 @@ class RequestServiceImplIntegrationTest {
         RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
                 .description("test description")
                 .build();
-        requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
 
         List<RequestResponse> allRequests = requestService.findAllRequests();
 
         assertThat(allRequests).hasSize(1);
+        assertThat(allRequests.get(0).getId()).isEqualTo(requestResponse.getId());
         assertThat(allRequests.get(0).getDescription()).isEqualTo("test description");
         assertThat(allRequests.get(0).getRequesterId()).isEqualTo(userResponse.getId());
     }
@@ -128,6 +130,7 @@ class RequestServiceImplIntegrationTest {
 
         RequestWithAnswersResponse foundRequest = requestService.findRequestById(requestResponse.getId());
 
+        assertThat(foundRequest.getId()).isEqualTo(requestResponse.getId());
         assertThat(foundRequest.getId()).isEqualTo(requestResponse.getId());
         assertThat(foundRequest.getDescription()).isEqualTo("test description");
     }
@@ -155,8 +158,9 @@ class RequestServiceImplIntegrationTest {
 
         RequestWithAnswersResponse foundRequest = requestService.findRequestById(requestResponse.getId());
 
-        assertThat(foundRequest.getId()).isEqualTo(requestResponse.getId());
         assertThat(foundRequest.getItems()).hasSize(1);
+        assertThat(foundRequest.getId()).isEqualTo(requestResponse.getId());
+        assertThat(foundRequest.getItems().get(0).getId()).isEqualTo(itemResponse.getId());
         assertThat(foundRequest.getItems().get(0).getName()).isEqualTo("test item");
     }
 }
