@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -82,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingResponse> getBookerBookings(Long bookerId, State state) {
         userService.getUser(bookerId);
-        Collection<Booking> bookings;
+        Collection<Booking> bookings = List.of();
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(bookerId);
             case CURRENT -> bookings = bookingRepository.findCurrentByBooker_Id(bookerId);
@@ -90,7 +91,6 @@ public class BookingServiceImpl implements BookingService {
             case FUTURE -> bookings = bookingRepository.findFutureByBooker_Id(bookerId);
             case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.WAITING);
             case REJECTED -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.REJECTED);
-            default -> throw new IllegalStateException("Unknown state");
         }
 
         return bookings.stream().map(booking ->
@@ -104,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingResponse> getOwnerBookings(Long ownerId, State state) {
         userService.getUser((ownerId));
-        Collection<Booking> bookings;
+        Collection<Booking> bookings = List.of();
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(ownerId);
             case CURRENT -> bookings = bookingRepository.findCurrentByOwner_Id(ownerId);
@@ -112,7 +112,6 @@ public class BookingServiceImpl implements BookingService {
             case FUTURE -> bookings = bookingRepository.findFutureByOwner_Id(ownerId);
             case WAITING -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.WAITING);
             case REJECTED -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.REJECTED);
-            default -> throw new IllegalStateException("Unknown state");
         }
 
         return bookings.stream().map(booking ->

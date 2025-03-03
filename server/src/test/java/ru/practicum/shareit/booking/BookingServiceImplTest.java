@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -195,6 +196,31 @@ class BookingServiceImplTest {
                 .build();
 
         BookingResponse actualResponse = bookingService.setApproved(1L, true, 1L);
+
+        Assertions.assertThat(actualResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("start", "end")
+                .isEqualTo(expectedResponse);
+
+        verify(bookingRepository, times(1)).findById(1L);
+        verify(bookingRepository, times(1)).save(any(Booking.class));
+    }
+
+    @Test
+    void shouldSetRejected() {
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
+
+        BookingResponse expectedResponse = BookingResponse.builder()
+                .id(1L)
+                .start(booking.getStartDate())
+                .end(booking.getEndDate())
+                .status(Status.REJECTED)
+                .item(itemResponse)
+                .booker(userResponse)
+                .build();
+
+        BookingResponse actualResponse = bookingService.setApproved(1L, false, 1L);
 
         Assertions.assertThat(actualResponse)
                 .usingRecursiveComparison()
@@ -416,5 +442,37 @@ class BookingServiceImplTest {
                 .containsExactlyInAnyOrder(bookingResponse);
 
         verify(bookingRepository, times(1)).findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(1L, Status.REJECTED);
+    }
+
+    @Test
+    void shouldThrowValidationExceptionWhenStartAfterEnd() {
+        when(itemService.findItem(anyLong())).thenReturn(itemResponse);
+        when(userService.getUser(anyLong())).thenReturn(userResponse);
+
+        CreateBookingRequest createBookingRequest = CreateBookingRequest.builder()
+                .itemId(1L)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().minusDays(1))
+                .build();
+
+        assertThatThrownBy(() -> bookingService.createBooking(createBookingRequest, 1L))
+                .isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    void shouldThrowValidationExceptionWhenStartEqualEnd() {
+        when(itemService.findItem(anyLong())).thenReturn(itemResponse);
+        when(userService.getUser(anyLong())).thenReturn(userResponse);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        CreateBookingRequest createBookingRequest = CreateBookingRequest.builder()
+                .itemId(1L)
+                .start(now)
+                .end(now)
+                .build();
+
+        assertThatThrownBy(() -> bookingService.createBooking(createBookingRequest, 1L))
+                .isInstanceOf(ValidationException.class);
     }
 }
