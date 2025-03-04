@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.ItemResponse;
-import ru.practicum.shareit.request.dto.RequestCreateRequest;
+import ru.practicum.shareit.request.dto.RequestCreateDto;
 import ru.practicum.shareit.request.dto.RequestResponse;
 import ru.practicum.shareit.request.dto.RequestWithAnswersResponse;
 import ru.practicum.shareit.request.service.RequestService;
@@ -36,7 +36,7 @@ public class ItemRequestControllerTest {
 
     @Test
     void testCreateRequest() throws Exception {
-        RequestCreateRequest createRequest = RequestCreateRequest.builder()
+        RequestCreateDto createRequest = RequestCreateDto.builder()
                 .description("request description test")
                 .build();
 
@@ -47,7 +47,7 @@ public class ItemRequestControllerTest {
                 .created(LocalDateTime.now())
                 .build();
 
-        Mockito.when(requestService.createRequest(Mockito.any(RequestCreateRequest.class), Mockito.eq(1L)))
+        Mockito.when(requestService.createRequest(Mockito.any(RequestCreateDto.class), Mockito.eq(1L)))
                 .thenReturn(requestResponse);
 
         mockMvc.perform(post("/requests")

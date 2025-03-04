@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.request.dto.RequestCreateRequest;
+import ru.practicum.shareit.request.dto.RequestCreateDto;
 import ru.practicum.shareit.request.dto.RequestResponse;
 import ru.practicum.shareit.request.dto.RequestWithAnswersResponse;
 import ru.practicum.shareit.request.service.impl.RequestServiceImpl;
@@ -53,7 +53,7 @@ class RequestServiceImplTest {
     private User user;
     private UserResponse userResponse;
     private Request request;
-    private RequestCreateRequest requestCreateRequest;
+    private RequestCreateDto requestCreateDto;
     private RequestResponse requestResponse;
     private RequestWithAnswersResponse requestWithAnswersResponse;
     private ItemResponse itemResponse;
@@ -76,7 +76,7 @@ class RequestServiceImplTest {
         request.setRequester(user);
         request.setCreationDate(LocalDateTime.now());
 
-        requestCreateRequest = RequestCreateRequest.builder()
+        requestCreateDto = RequestCreateDto.builder()
                 .description("request description test")
                 .build();
 
@@ -108,7 +108,7 @@ class RequestServiceImplTest {
         when(userService.getUser(anyLong())).thenReturn(userResponse);
         when(requestRepository.save(any(Request.class))).thenReturn(request);
 
-        RequestResponse actualResponse = requestService.createRequest(requestCreateRequest, 1L);
+        RequestResponse actualResponse = requestService.createRequest(requestCreateDto, 1L);
 
         Assertions.assertThat(actualResponse)
                 .usingRecursiveComparison()
@@ -123,7 +123,7 @@ class RequestServiceImplTest {
     void shouldThrowNotFoundExceptionWhenUserNotFoundForCreateRequest() {
         when(userService.getUser(anyLong())).thenThrow(new NotFoundException(""));
 
-        assertThatThrownBy(() -> requestService.createRequest(requestCreateRequest, 1L))
+        assertThatThrownBy(() -> requestService.createRequest(requestCreateDto, 1L))
                 .isInstanceOf(NotFoundException.class);
 
         verify(userService, times(1)).getUser(1L);
@@ -148,7 +148,7 @@ class RequestServiceImplTest {
 
     @Test
     void shouldFindAllRequests() {
-        when(requestRepository.findAllOrderByCreationDateDesc()).thenReturn(List.of(request));
+        when(requestRepository.findAllByOrderByCreationDateDesc()).thenReturn(List.of(request));
 
         List<RequestResponse> actualResponses = requestService.findAllRequests();
 
@@ -157,7 +157,7 @@ class RequestServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created")
                 .containsExactlyInAnyOrder(requestResponse);
 
-        verify(requestRepository, times(1)).findAllOrderByCreationDateDesc();
+        verify(requestRepository, times(1)).findAllByOrderByCreationDateDesc();
     }
 
     @Test

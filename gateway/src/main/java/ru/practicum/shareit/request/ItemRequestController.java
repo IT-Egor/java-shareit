@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.request.dto.RequestCreateRequest;
+import ru.practicum.shareit.request.dto.RequestCreateDto;
 
 @RestController
 @RequestMapping(path = "/requests")
@@ -15,10 +15,10 @@ public class ItemRequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createRequest(@Valid @RequestBody RequestCreateRequest itemRequestCreateRequest,
+    public ResponseEntity<Object> createRequest(@Valid @RequestBody RequestCreateDto itemRequestCreateDto,
                                                 @RequestHeader(name = "X-Sharer-User-Id") Long requesterId) {
 
-        return requestClient.createRequest(itemRequestCreateRequest, requesterId);
+        return requestClient.createRequest(itemRequestCreateDto, requesterId);
     }
 
     @GetMapping

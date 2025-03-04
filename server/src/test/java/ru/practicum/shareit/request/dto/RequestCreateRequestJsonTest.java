@@ -12,15 +12,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RequestCreateRequestJsonTest {
 
     @Autowired
-    private JacksonTester<RequestCreateRequest> jsonTester;
+    private JacksonTester<RequestCreateDto> jsonTester;
 
     @Test
     void testRequestCreateRequestSerialization() throws Exception {
-        RequestCreateRequest request = RequestCreateRequest.builder()
+        RequestCreateDto request = RequestCreateDto.builder()
                 .description("Test Description")
                 .build();
 
-        JsonContent<RequestCreateRequest> json = jsonTester.write(request);
+        JsonContent<RequestCreateDto> json = jsonTester.write(request);
 
         assertThat(json).extractingJsonPathStringValue("$.description").isEqualTo("Test Description");
     }
@@ -29,7 +29,7 @@ public class RequestCreateRequestJsonTest {
     void testRequestCreateRequestDeserialization() throws Exception {
         String jsonContent = "{\"description\":\"Test Description\"}";
 
-        RequestCreateRequest request = jsonTester.parseObject(jsonContent);
+        RequestCreateDto request = jsonTester.parseObject(jsonContent);
 
         assertThat(request.getDescription()).isEqualTo("Test Description");
     }

@@ -7,7 +7,7 @@ import ru.practicum.shareit.item.dto.ItemResponseBookingComments;
 import ru.practicum.shareit.item.dto.ItemResponseComments;
 import ru.practicum.shareit.item.model.Item;
 
-// Бессмысленный тест, нужен толь для выполнения покрытия
+// Бессмысленный тест, нужен только для выполнения покрытия
 public class ItemMapperTest {
     private ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
 

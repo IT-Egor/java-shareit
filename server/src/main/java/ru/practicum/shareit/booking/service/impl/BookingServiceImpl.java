@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
         Collection<Booking> bookings = List.of();
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(bookerId);
-            case CURRENT -> bookings = bookingRepository.findCurrentByBooker_Id(bookerId);
+            case CURRENT -> bookings = bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(bookerId);
             case PAST -> bookings = bookingRepository.findPastByBooker_Id(bookerId);
             case FUTURE -> bookings = bookingRepository.findFutureByBooker_Id(bookerId);
             case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.WAITING);

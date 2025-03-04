@@ -292,7 +292,7 @@ class BookingServiceImplTest {
 
     @Test
     void shouldGetBookerBookingsCurrent() {
-        when(bookingRepository.findCurrentByBooker_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(anyLong())).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getBookerBookings(1L, State.CURRENT);
 
@@ -301,7 +301,7 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findCurrentByBooker_Id(1L);
+        verify(bookingRepository, times(1)).findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(1L);
     }
 
     @Test

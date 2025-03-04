@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.Request;
 import ru.practicum.shareit.request.RequestMapper;
 import ru.practicum.shareit.request.RequestRepository;
-import ru.practicum.shareit.request.dto.RequestCreateRequest;
+import ru.practicum.shareit.request.dto.RequestCreateDto;
 import ru.practicum.shareit.request.dto.RequestResponse;
 import ru.practicum.shareit.request.dto.RequestWithAnswersResponse;
 import ru.practicum.shareit.request.service.RequestService;
@@ -32,9 +32,9 @@ public class RequestServiceImpl implements RequestService {
     private UserMapper userMapper;
 
     @Override
-    public RequestResponse createRequest(RequestCreateRequest itemRequestCreateRequest, Long requesterId) {
+    public RequestResponse createRequest(RequestCreateDto itemRequestCreateDto, Long requesterId) {
         User requester = userMapper.responseToUser(userService.getUser(requesterId));
-        Request request = requestMapper.requestCreateRequestToRequest(itemRequestCreateRequest, requester);
+        Request request = requestMapper.requestCreateRequestToRequest(itemRequestCreateDto, requester);
         request.setCreationDate(LocalDateTime.now());
         return requestMapper.requestToResponse(requestRepository.save(request));
     }
@@ -57,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestResponse> findAllRequests() {
-        return requestRepository.findAllOrderByCreationDateDesc().stream()
+        return requestRepository.findAllByOrderByCreationDateDesc().stream()
                 .map(requestMapper::requestToResponse)
                 .toList();
     }

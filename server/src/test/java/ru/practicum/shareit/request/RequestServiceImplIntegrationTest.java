@@ -10,7 +10,7 @@ import ru.practicum.shareit.exception.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.CreateItemRequest;
 import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.request.dto.RequestCreateRequest;
+import ru.practicum.shareit.request.dto.RequestCreateDto;
 import ru.practicum.shareit.request.dto.RequestResponse;
 import ru.practicum.shareit.request.dto.RequestWithAnswersResponse;
 import ru.practicum.shareit.request.service.impl.RequestServiceImpl;
@@ -67,11 +67,11 @@ class RequestServiceImplIntegrationTest {
 
     @Test
     void shouldCreateRequest() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
 
-        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateDto, userResponse.getId());
 
         assertThat(requestResponse.getId()).isNotNull();
         assertThat(requestResponse.getDescription()).isEqualTo("test description");
@@ -84,20 +84,20 @@ class RequestServiceImplIntegrationTest {
 
     @Test
     void shouldThrowNotFoundExceptionWhenUserNotFoundForCreateRequest() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
 
-        assertThatThrownBy(() -> requestService.createRequest(requestCreateRequest, 999L))
+        assertThatThrownBy(() -> requestService.createRequest(requestCreateDto, 999L))
                 .isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void shouldFindAllUserRequests() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
-        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateDto, userResponse.getId());
 
         List<RequestWithAnswersResponse> userRequests = requestService.findAllUserRequests(userResponse.getId());
 
@@ -108,10 +108,10 @@ class RequestServiceImplIntegrationTest {
 
     @Test
     void shouldFindAllRequests() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
-        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateDto, userResponse.getId());
 
         List<RequestResponse> allRequests = requestService.findAllRequests();
 
@@ -123,10 +123,10 @@ class RequestServiceImplIntegrationTest {
 
     @Test
     void shouldFindRequestById() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
-        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateDto, userResponse.getId());
 
         RequestWithAnswersResponse foundRequest = requestService.findRequestById(requestResponse.getId());
 
@@ -143,10 +143,10 @@ class RequestServiceImplIntegrationTest {
 
     @Test
     void shouldFindRequestWithItems() {
-        RequestCreateRequest requestCreateRequest = RequestCreateRequest.builder()
+        RequestCreateDto requestCreateDto = RequestCreateDto.builder()
                 .description("test description")
                 .build();
-        RequestResponse requestResponse = requestService.createRequest(requestCreateRequest, userResponse.getId());
+        RequestResponse requestResponse = requestService.createRequest(requestCreateDto, userResponse.getId());
 
         CreateItemRequest createItemRequest = CreateItemRequest.builder()
                 .name("test item")

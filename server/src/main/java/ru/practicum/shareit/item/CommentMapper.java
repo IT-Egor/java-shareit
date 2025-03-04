@@ -2,16 +2,15 @@ package ru.practicum.shareit.item;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import ru.practicum.shareit.item.dto.ItemCommentResponse;
 import ru.practicum.shareit.item.dto.CreateCommentRequest;
+import ru.practicum.shareit.item.dto.ItemCommentResponse;
 import ru.practicum.shareit.item.dto.ItemResponse;
 import ru.practicum.shareit.item.dto.MergeCommentResponse;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper
 public interface CommentMapper {
 
     @Mapping(target = "item", source = "item")

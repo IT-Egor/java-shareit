@@ -9,7 +9,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findAllByBooker_IdOrderByStartDateDesc(Long bookerId);
 
     @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.startDate < CURRENT_TIMESTAMP AND b.endDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findCurrentByBooker_Id(Long bookerId);
+    Collection<Booking> findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(Long bookerId);
 
     @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.endDate < CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
     Collection<Booking> findPastByBooker_Id(Long bookerId);
