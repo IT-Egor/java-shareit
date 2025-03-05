@@ -84,11 +84,12 @@ public class BookingServiceImpl implements BookingService {
     public Collection<BookingResponse> getBookerBookings(Long bookerId, State state) {
         userService.getUser(bookerId);
         Collection<Booking> bookings = List.of();
+        LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByBooker_IdOrderByStartDateDesc(bookerId);
-            case CURRENT -> bookings = bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(bookerId);
-            case PAST -> bookings = bookingRepository.findPastByBooker_Id(bookerId);
-            case FUTURE -> bookings = bookingRepository.findFutureByBooker_Id(bookerId);
+            case CURRENT -> bookings = bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(bookerId, now, now);
+            case PAST -> bookings = bookingRepository.findByBooker_IdAndEndDateBeforeOrderByStartDateDesc(bookerId, now);
+            case FUTURE -> bookings = bookingRepository.findByBooker_IdAndStartDateAfterOrderByStartDateDesc(bookerId, now);
             case WAITING -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.WAITING);
             case REJECTED -> bookings = bookingRepository.findAllByBooker_IdAndStatusOrderByStartDateDesc(bookerId, Status.REJECTED);
         }
@@ -105,11 +106,12 @@ public class BookingServiceImpl implements BookingService {
     public Collection<BookingResponse> getOwnerBookings(Long ownerId, State state) {
         userService.getUser((ownerId));
         Collection<Booking> bookings = List.of();
+        LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL -> bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDateDesc(ownerId);
-            case CURRENT -> bookings = bookingRepository.findCurrentByOwner_Id(ownerId);
-            case PAST -> bookings = bookingRepository.findPastByOwner_Id(ownerId);
-            case FUTURE -> bookings = bookingRepository.findFutureByOwner_Id(ownerId);
+            case CURRENT -> bookings = bookingRepository.findByItem_Owner_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(ownerId, now, now);
+            case PAST -> bookings = bookingRepository.findByItem_Owner_IdAndEndDateBeforeOrderByStartDateDesc(ownerId, now);
+            case FUTURE -> bookings = bookingRepository.findByItem_Owner_IdAndStartDateAfterOrderByStartDateDesc(ownerId, now);
             case WAITING -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.WAITING);
             case REJECTED -> bookings = bookingRepository.findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(ownerId, Status.REJECTED);
         }

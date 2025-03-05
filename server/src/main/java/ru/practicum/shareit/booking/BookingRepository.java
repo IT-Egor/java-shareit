@@ -1,39 +1,32 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findAllByBooker_IdOrderByStartDateDesc(Long bookerId);
 
-    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.startDate < CURRENT_TIMESTAMP AND b.endDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(Long bookerId);
+    Collection<Booking> findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(Long bookerId, LocalDateTime now1, LocalDateTime now2);
 
-    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.endDate < CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findPastByBooker_Id(Long bookerId);
+    Collection<Booking> findByBooker_IdAndEndDateBeforeOrderByStartDateDesc(Long bookerId, LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.startDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findFutureByBooker_Id(Long bookerId);
+    Collection<Booking> findByBooker_IdAndStartDateAfterOrderByStartDateDesc(Long bookerId, LocalDateTime now);
 
     Collection<Booking> findAllByBooker_IdAndStatusOrderByStartDateDesc(Long bookerId, Status status);
 
 
     Collection<Booking> findAllByItem_Owner_IdOrderByStartDateDesc(Long ownerId);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId AND b.startDate < CURRENT_TIMESTAMP AND b.endDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findCurrentByOwner_Id(Long ownerId);
+    Collection<Booking> findByItem_Owner_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(Long ownerId, LocalDateTime now1, LocalDateTime now2);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId AND b.endDate < CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findPastByOwner_Id(Long ownerId);
+    Collection<Booking> findByItem_Owner_IdAndEndDateBeforeOrderByStartDateDesc(Long ownerId, LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId AND b.startDate > CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findFutureByOwner_Id(Long ownerId);
+    Collection<Booking> findByItem_Owner_IdAndStartDateAfterOrderByStartDateDesc(Long ownerId, LocalDateTime now);
 
     Collection<Booking> findAllByItem_Owner_IdAndStatusOrderByStartDateDesc(Long ownerId, Status status);
 
 
-    @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId AND b.item.id = :itemId AND b.endDate < CURRENT_TIMESTAMP ORDER BY b.startDate DESC")
-    Collection<Booking> findPastByItem_IdAndBooker_Id(Long itemId, Long bookerId);
+    Collection<Booking> findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(Long itemId, Long bookerId, LocalDateTime now);
 }

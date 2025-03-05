@@ -313,7 +313,11 @@ class ItemServiceImplTest {
     void shouldAddComment() {
         when(userService.getUser(anyLong())).thenReturn(userResponse);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.findPastByItem_IdAndBooker_Id(anyLong(), anyLong())).thenReturn(List.of(new Booking()));
+        when(bookingRepository.findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(
+                anyLong(),
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(new Booking()));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         MergeCommentResponse expectedResponse = commentMapper.commentToMergeResponse(
@@ -325,7 +329,8 @@ class ItemServiceImplTest {
 
         verify(userService, times(1)).getUser(1L);
         verify(itemRepository, times(1)).findById(1L);
-        verify(bookingRepository, times(1)).findPastByItem_IdAndBooker_Id(1L, 1L);
+        verify(bookingRepository, times(1))
+                .findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(eq(1L), eq(1L), any(LocalDateTime.class));
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
@@ -338,7 +343,8 @@ class ItemServiceImplTest {
 
         verify(userService, never()).getUser(1L);
         verify(itemRepository, times(1)).findById(1L);
-        verify(bookingRepository, never()).findPastByItem_IdAndBooker_Id(anyLong(), anyLong());
+        verify(bookingRepository, never())
+                .findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(anyLong(), anyLong(), any(LocalDateTime.class));
         verify(commentRepository, never()).save(any(Comment.class));
     }
 
@@ -346,14 +352,19 @@ class ItemServiceImplTest {
     void shouldThrowValidationExceptionWhenAddingCommentWithoutBooking() {
         when(userService.getUser(anyLong())).thenReturn(userResponse);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.findPastByItem_IdAndBooker_Id(anyLong(), anyLong())).thenReturn(Collections.emptyList());
+        when(bookingRepository.findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(
+                anyLong(),
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(Collections.emptyList());
 
         assertThatThrownBy(() -> itemService.addComment(createCommentRequest, 1L, 1L))
                 .isInstanceOf(ValidationException.class);
 
         verify(userService, times(1)).getUser(1L);
         verify(itemRepository, times(1)).findById(1L);
-        verify(bookingRepository, times(1)).findPastByItem_IdAndBooker_Id(1L, 1L);
+        verify(bookingRepository, times(1))
+                .findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(eq(1L), eq(1L), any(LocalDateTime.class));
     }
 
     @Test

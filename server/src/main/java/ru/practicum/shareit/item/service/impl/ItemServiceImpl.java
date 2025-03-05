@@ -132,7 +132,8 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItem(itemId);
         User author = userMapper.responseToUser(userService.getUser(authorId));
 
-        if (bookingRepository.findPastByItem_IdAndBooker_Id(itemId, authorId).isEmpty()) {
+        LocalDateTime now = LocalDateTime.now();
+        if (bookingRepository.findByItem_IdAndBooker_IdAndEndDateBeforeOrderByStartDateDesc(itemId, authorId, now).isEmpty()) {
             throw new ValidationException(String.format("Item id=%d completed booking of user id=%d not found", itemId, authorId));
         }
 

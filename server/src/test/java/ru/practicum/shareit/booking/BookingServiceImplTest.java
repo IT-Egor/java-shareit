@@ -292,7 +292,11 @@ class BookingServiceImplTest {
 
     @Test
     void shouldGetBookerBookingsCurrent() {
-        when(bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getBookerBookings(1L, State.CURRENT);
 
@@ -301,12 +305,17 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(1L);
+        verify(bookingRepository, times(1))
+                .findByBooker_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(
+                        eq(1L), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     @Test
     void shouldGetBookerBookingsPast() {
-        when(bookingRepository.findPastByBooker_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByBooker_IdAndEndDateBeforeOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getBookerBookings(1L, State.PAST);
 
@@ -315,12 +324,16 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findPastByBooker_Id(1L);
+        verify(bookingRepository, times(1))
+                .findByBooker_IdAndEndDateBeforeOrderByStartDateDesc(eq(1L), any(LocalDateTime.class));
     }
 
     @Test
     void shouldGetBookerBookingsFuture() {
-        when(bookingRepository.findFutureByBooker_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByBooker_IdAndStartDateAfterOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getBookerBookings(1L, State.FUTURE);
 
@@ -329,7 +342,8 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findFutureByBooker_Id(1L);
+        verify(bookingRepository, times(1))
+                .findByBooker_IdAndStartDateAfterOrderByStartDateDesc(eq(1L), any(LocalDateTime.class));
     }
 
     @Test
@@ -376,7 +390,11 @@ class BookingServiceImplTest {
 
     @Test
     void shouldGetOwnerBookingsCurrent() {
-        when(bookingRepository.findCurrentByOwner_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByItem_Owner_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getOwnerBookings(1L, State.CURRENT);
 
@@ -385,12 +403,20 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findCurrentByOwner_Id(1L);
+        verify(bookingRepository, times(1))
+                .findByItem_Owner_IdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(
+                        eq(1L),
+                        any(LocalDateTime.class),
+                        any(LocalDateTime.class)
+                );
     }
 
     @Test
     void shouldGetOwnerBookingsPast() {
-        when(bookingRepository.findPastByOwner_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByItem_Owner_IdAndEndDateBeforeOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getOwnerBookings(1L, State.PAST);
 
@@ -399,12 +425,16 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findPastByOwner_Id(1L);
+        verify(bookingRepository, times(1))
+                .findByItem_Owner_IdAndEndDateBeforeOrderByStartDateDesc(eq(1L), any(LocalDateTime.class));
     }
 
     @Test
     void shouldGetOwnerBookingsFuture() {
-        when(bookingRepository.findFutureByOwner_Id(anyLong())).thenReturn(List.of(booking));
+        when(bookingRepository.findByItem_Owner_IdAndStartDateAfterOrderByStartDateDesc(
+                anyLong(),
+                any(LocalDateTime.class))
+        ).thenReturn(List.of(booking));
 
         Collection<BookingResponse> actualResponses = bookingService.getOwnerBookings(1L, State.FUTURE);
 
@@ -413,7 +443,8 @@ class BookingServiceImplTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("start", "end")
                 .containsExactlyInAnyOrder(bookingResponse);
 
-        verify(bookingRepository, times(1)).findFutureByOwner_Id(1L);
+        verify(bookingRepository, times(1))
+                .findByItem_Owner_IdAndStartDateAfterOrderByStartDateDesc(eq(1L), any(LocalDateTime.class));
     }
 
     @Test
